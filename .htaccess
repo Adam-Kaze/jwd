@@ -1,0 +1,29 @@
+# ============================================================
+# HTACCESS - MENYEMBUNYIKAN EKSTENSI .PHP
+# ============================================================
+
+Options +FollowSymLinks -MultiViews
+RewriteEngine On
+
+# 1. Redirect dari URL berakhiran .php ke tanpa .php (SEO Friendly)
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)\.php$ /$1 [L,R=301]
+
+# 2. Secara internal arahkan URL tanpa .php ke file .php yang sebenarnya
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php [L]
+
+# 3. Menangani folder katalog agar bisa diakses tanpa index.php
+#    (Misal: /katalog/ otomatis menampilkan /katalog/index.php)
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^(.*)/$ $1/index.php [L]
+
+# ============================================================
+# KEAMANAN: Blokir akses langsung ke file penting
+# ============================================================
+<FilesMatch "^(config\.php|\.htaccess|\.gitignore|.*\.sql)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
