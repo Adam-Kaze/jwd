@@ -135,9 +135,9 @@ include '../includes/header.php';
                         <td>
                             <div class="action-buttons">
                                 <a href="edit.php?id=<?= $inv['id'] ?>" class="btn-edit" title="Edit"><i class="fas fa-edit"></i></a>
-                                <a href="../../public/invoice/view.php?link=<?= $inv['unique_link'] ?>" target="_blank" class="btn-view" title="Lihat"><i class="fas fa-eye"></i></a>
-                                <a href="../../pdf/generate.php?link=<?= $inv['unique_link'] ?>" target="_blank" class="btn-pdf" title="PDF"><i class="fas fa-file-pdf"></i></a>
-                                <a href="delete.php?id=<?= $inv['id'] ?>" class="btn-delete" onclick="return confirm('Yakin hapus?')" title="Hapus"><i class="fas fa-trash"></i></a>
+                                <a href="view.php?id=<?= $inv['id'] ?>" target="_blank" class="btn-view" title="Lihat Invoice"><i class="fas fa-eye"></i></a>
+                                <a href="view.php?id=<?= $inv['id'] ?>" target="_blank" class="btn-pdf" title="Cetak / PDF"><i class="fas fa-file-pdf"></i></a>
+                                <a href="delete.php?id=<?= $inv['id'] ?>" class="btn-delete" onclick="return confirm('Yakin hapus invoice ini?')" title="Hapus"><i class="fas fa-trash"></i></a>
                             </div>
                         </td>
                     </tr>

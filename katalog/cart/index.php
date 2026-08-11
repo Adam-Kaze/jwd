@@ -401,14 +401,51 @@ $wa_message .= "Mohon informasi lebih lanjut mengenai pengerjaan dan ketersediaa
                 <div class="cart-total">
                     Total Estimasi: <span><?= format_rupiah($total_price) ?></span>
                 </div>
-                <a href="https://wa.me/<?= $wa_default ?>?text=<?= rawurlencode($wa_message) ?>" class="btn-checkout" target="_blank">
+                <button type="button" onclick="checkoutViaWA()" class="btn-checkout" id="btnCheckoutWA">
                     <i class="fab fa-whatsapp"></i> Konsultasi Semua via WA
-                </a>
+                </button>
             </div>
         <?php endif; ?>
     </div>
     
     <script>
+        function checkoutViaWA() {
+            const btn = document.getElementById('btnCheckoutWA');
+            if (btn) btn.disabled = true;
+            
+            showToast('Memproses invoice & mengalihkan ke WhatsApp...');
+            
+            fetch('../ajax/cart_ajax.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: 'action=checkout'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.open(data.wa_url, '_blank');
+                    
+                    if (window.opener && window.opener.updateCartBadge) {
+                        window.opener.updateCartBadge();
+                    }
+                    
+                    setTimeout(() => {
+                        location.reload();
+                    }, 800);
+                } else {
+                    showToast(data.message || 'Gagal memproses checkout', true);
+                    if (btn) btn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('Terjadi kesalahan sistem', true);
+                if (btn) btn.disabled = false;
+            });
+        }
         function showToast(message, isError = false) {
             const existingToast = document.querySelector('.toast-notification');
             if (existingToast) existingToast.remove();

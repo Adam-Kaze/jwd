@@ -238,8 +238,8 @@
             font-size: 0.8rem;
         }
         
-        /* Cart Button Link - Dark */
-        .cart-link {
+        /* Cart & History Button Links - Dark */
+        .cart-link, .history-link {
             position: relative;
             color: #a0a0a0;
             text-decoration: none;
@@ -247,7 +247,7 @@
             align-items: center;
             transition: all 0.2s;
         }
-        .cart-link:hover {
+        .cart-link:hover, .history-link:hover {
             color: #d4af37;
             transform: translateY(-2px);
         }
@@ -919,9 +919,14 @@
                 </div>
             </div>
             
-            <a href="cart/index.php" class="cart-link" title="Koleksi Saya">
+            <a href="<?= defined('SITE_URL') ? SITE_URL : '../' ?>cart/index.php" class="cart-link" title="Koleksi Simpanan Saya">
                 <i class="fa-regular fa-star"></i>
                 <span class="cart-badge" id="cartCount">0</span>
+            </a>
+
+            <a href="<?= defined('SITE_URL') ? SITE_URL : '../' ?>history/index.php" class="history-link" title="Riwayat Konsultasi">
+                <i class="fas fa-clock-rotate-left"></i>
+                <span class="cart-badge" id="historyCount"><?= isset($_SESSION['history']) ? count($_SESSION['history']) : 0 ?></span>
             </a>
         </div>
     </header>

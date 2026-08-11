@@ -4,7 +4,8 @@
 // Letakkan file ini di folder: katalog/ajax/cart_ajax.php
 // ============================================================
 
-// Include file fungsi cart (menggunakan path relatif dari folder ajax ke includes)
+// Include config & file fungsi cart
+require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../includes/cart_functions.php';
 
 // Pastikan ini hanya diakses melalui AJAX
@@ -59,6 +60,83 @@ switch ($action) {
         $response['count'] = 0;
         $response['total'] = 0;
         $response['success'] = true;
+        break;
+        
+    case 'checkout':
+        $cart_items = getCartItems();
+        if (empty($cart_items)) {
+            $response['success'] = false;
+            $response['message'] = 'Koleksi simpanan Anda kosong!';
+            break;
+        }
+        
+        $total_price = getCartTotal();
+        $wa_number = get_wa_number();
+        
+        // Buat pesan WhatsApp
+        $wa_message = "Halo DKV ROOM,\n\nSaya berminat untuk berkonsultasi mengenai koleksi karya yang telah saya simpan berikut:\n\n";
+        $no = 1;
+        $service_desc_lines = [];
+        foreach ($cart_items as $item) {
+            $wa_message .= $no . ". *" . $item['name'] . "* - " . format_rupiah($item['price']) . "\n";
+            $service_desc_lines[] = $no . ". " . $item['name'] . " - " . format_rupiah($item['price']);
+            $no++;
+        }
+        $wa_message .= "\n*Total Estimasi Biaya:* " . format_rupiah($total_price) . "\n\n";
+        $wa_message .= "Mohon informasi lebih lanjut mengenai pengerjaan dan ketersediaan slot. Terima kasih!";
+        
+        $wa_url = "https://wa.me/{$wa_number}?text=" . rawurlencode($wa_message);
+        
+        // Buat Invoice otomatis di Database Admin
+        global $conn;
+        $invoice_number = 'INV-DKV-' . date('Ymd') . '-' . strtoupper(substr(uniqid(), -4));
+        $unique_link = substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 12);
+        
+        $client_name = 'Klien Simpanan Website';
+        $service_name = 'Konsultasi Koleksi Karya (' . count($cart_items) . ' item)';
+        $service_description = implode("\n", $service_desc_lines);
+        $status = 'sent';
+        $issue_date = date('Y-m-d');
+        $due_date = date('Y-m-d', strtotime('+30 days'));
+        
+        $stmt_ins = mysqli_prepare($conn, "INSERT INTO invoices (
+            invoice_number, client_name, service_name, service_description,
+            amount, tax, discount, total, status, issue_date, due_date, unique_link
+        ) VALUES (?, ?, ?, ?, ?, 0, 0, ?, ?, ?, ?, ?)");
+        
+        if ($stmt_ins) {
+            mysqli_stmt_bind_param($stmt_ins, "ssssddssss",
+                $invoice_number, $client_name, $service_name, $service_description,
+                $total_price, $total_price, $status, $issue_date, $due_date, $unique_link
+            );
+            mysqli_stmt_execute($stmt_ins);
+            mysqli_stmt_close($stmt_ins);
+        }
+        
+        // Simpan ke Riwayat Konsultasi Session User
+        if (!isset($_SESSION['history'])) {
+            $_SESSION['history'] = [];
+        }
+        
+        $history_item = [
+            'id' => time(),
+            'invoice_number' => $invoice_number,
+            'unique_link' => $unique_link,
+            'items' => $cart_items,
+            'total' => $total_price,
+            'date' => date('Y-m-d H:i:s'),
+            'wa_url' => $wa_url
+        ];
+        array_unshift($_SESSION['history'], $history_item);
+        
+        // Otomatis Kosongkan Keranjang Simpanan
+        clearCart();
+        
+        $response['success'] = true;
+        $response['wa_url'] = $wa_url;
+        $response['invoice_number'] = $invoice_number;
+        $response['count'] = 0;
+        $response['history_count'] = count($_SESSION['history']);
         break;
 }
 
