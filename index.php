@@ -555,11 +555,11 @@
                         <strong>Jelajahi portofolio kami</strong> dan temukan inspirasi untuk proyek Anda berikutnya.
                     </p>
 
-                    <!-- Button Katalog -->
+                    <!-- Button Layanan -->
                     <div class="button-wrapper">
                         <button class="btn-catalog" onclick="window.location.href='katalog/'">
-                            <i class="fa-solid fa-folder-open"></i>
-                            Katalog
+                            <i class="fa-solid fa-briefcase"></i>
+                            Lihat Layanan
                         </button>
                     </div>
 
@@ -642,10 +642,7 @@
         `;
         document.head.appendChild(style);
 
-        // ===== AUTO SHOW NOTIFICATION =====
-        setTimeout(() => {
-            showNotification('👋 Selamat datang di DKV ROOM! Klik Katalog untuk melihat portofolio kami.');
-        }, 2000);
+
     </script>
 
 </body>

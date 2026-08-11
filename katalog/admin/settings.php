@@ -11,7 +11,7 @@ require_login();
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['save_settings'])) {
     
     $site_name = clean_input($_POST['site_name']);
-    $wa_number = clean_input($_POST['wa_number']);
+    $wa_number = clean_phone_number(clean_input($_POST['wa_number']));
     $footer_copyright = clean_input($_POST['footer_copyright']);
     $footer_credit_left = clean_input($_POST['footer_credit_left']);
     $footer_credit_right = clean_input($_POST['footer_credit_right']);
@@ -177,8 +177,8 @@ include 'includes/header.php';
                 <h4><i class="fab fa-whatsapp" style="color: #25D366;"></i> Kontak WhatsApp</h4>
                 <div class="form-group">
                     <label>Nomor WhatsApp Default <span class="required">*</span></label>
-                    <input type="text" name="wa_number" value="<?= htmlspecialchars($current_settings['wa_number']) ?>" placeholder="6281234567890" required>
-                    <small>Gunakan format 628xxxxx (tanpa + atau spasi).</small>
+                    <input type="text" name="wa_number" value="<?= htmlspecialchars(format_phone_number($current_settings['wa_number'])) ?>" placeholder="+62 813-8379-6300" required>
+                    <small>Mendukung input format 08xxxxxxxx, 628xxxxxxxx, atau +62 8xx-xxxx-xxxx (otomatis rapi &amp; standar).</small>
                 </div>
             </div>
 

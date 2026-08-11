@@ -239,6 +239,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             text-align: center;
             border-left: 3px solid #ef4444;
         }
+        .btn-back {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            margin-top: 0.75rem;
+            background: transparent;
+            color: rgba(212, 175, 55, 0.7);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+        }
+        .btn-back:hover {
+            background: rgba(212, 175, 55, 0.08);
+            border-color: rgba(212, 175, 55, 0.5);
+            color: #d4af37;
+            transform: translateY(-1px);
+        }
         .footer-text {
             margin-top: 1.5rem;
             font-size: 0.7rem;
@@ -319,6 +342,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <button type="submit"><i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i> Masuk</button>
         </form>
+        <a href="../../index.php" class="btn-back"><i class="fas fa-arrow-left" style="margin-right: 8px;"></i> Kembali ke Halaman Utama</a>
         <div class="footer-text">
             &copy; <?= date('Y') ?> <strong>DKV ROOM</strong>
         </div>

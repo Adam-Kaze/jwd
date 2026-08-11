@@ -50,15 +50,15 @@ function require_login() {
  * Format Rupiah
  */
 function format_rupiah($amount) {
-    // Jika sudah ada format Rp, langsung return
-    if (strpos($amount, 'Rp') !== false) {
-        return $amount;
+    if (empty($amount)) {
+        return '-';
     }
     $number = preg_replace('/[^0-9]/', '', $amount);
-    if (is_numeric($number) && $number > 0) {
-        return 'Rp ' . number_format($number, 0, ',', '.');
+    if (is_numeric($number) && (int)$number > 0) {
+        return 'Rp ' . number_format((int)$number, 0, ',', '.');
     }
-    return $amount;
+    $clean_str = trim($amount);
+    return ($clean_str !== 'Rp' && !empty($clean_str)) ? $clean_str : '-';
 }
 
 /**
@@ -84,11 +84,78 @@ function get_setting($key, $default = null) {
 }
 
 /**
- * Ambil nomor WhatsApp dari setting
+ * Sanitasi nomor telepon agar hanya menyisakan angka dengan format 628xxxxxxxx
+ * (Mengubah 08xxx atau +628xxx menjadi 628xxx)
  */
-function get_wa_number() {
+function clean_phone_number($number) {
+    if (empty($number)) return '';
+    $digits = preg_replace('/[^0-9]/', '', $number);
+    if (empty($digits)) return '';
+    
+    // Ubah awalan 08... menjadi 628...
+    if (substr($digits, 0, 1) === '0') {
+        $digits = '62' . substr($digits, 1);
+    }
+    return $digits;
+}
+
+/**
+ * Format nomor telepon ke format tampilan "+62 8xx-xxxx-xxxx"
+ */
+function format_phone_number($number) {
+    $digits = clean_phone_number($number);
+    if (empty($digits)) return '';
+    
+    if (substr($digits, 0, 2) === '62') {
+        $rest = substr($digits, 2);
+        if (strlen($rest) >= 7) {
+            $p1 = substr($rest, 0, 3);
+            $p2 = substr($rest, 3, 4);
+            $p3 = substr($rest, 7);
+            return "+62 {$p1}-{$p2}-{$p3}";
+        } elseif (strlen($rest) >= 3) {
+            $p1 = substr($rest, 0, 3);
+            $p2 = substr($rest, 3);
+            return "+62 {$p1}-{$p2}";
+        } else {
+            return "+62 {$rest}";
+        }
+    }
+    return '+' . $digits;
+}
+
+/**
+ * Ambil nomor WhatsApp dari setting
+ * Jika $formatted = true, kembalikan "+62 8xx-xxxx-xxxx"
+ * Jika $formatted = false, kembalikan "628xxxxxxxx"
+ */
+function get_wa_number($formatted = false) {
     $wa = get_setting('wa_number');
-    return $wa ? $wa : '6281383796300';
+    $raw = $wa ? $wa : '6281383796300';
+    $clean = clean_phone_number($raw);
+    return $formatted ? format_phone_number($clean) : $clean;
+}
+
+/**
+ * Generate Link WhatsApp Konsultasi Produk dengan Template Pesan Rapi & Profesional
+ */
+function get_product_wa_consultation_link($product, $wa_default = null) {
+    $wa_raw = !empty($product['wa_number']) ? $product['wa_number'] : ($wa_default ?? get_wa_number());
+    $wa_clean = clean_phone_number($wa_raw);
+    
+    $name = $product['name'] ?? 'Karya DKV';
+    $category = $product['category_name'] ?? 'Umum';
+    $price = isset($product['price']) ? format_rupiah($product['price']) : '-';
+    
+    // Template Pesan WhatsApp yang Bersih, Rapi & Profesional
+    $msg = "Halo DKV ROOM,\n\n";
+    $msg .= "Saya berminat untuk berkonsultasi mengenai proyek/layanan berikut:\n\n";
+    $msg .= "*Produk:* {$name}\n";
+    $msg .= "*Kategori:* {$category}\n";
+    $msg .= "*Estimasi Biaya:* {$price}\n\n";
+    $msg .= "Mohon informasi lebih lanjut mengenai pengerjaan dan ketersediaan slot. Terima kasih!";
+    
+    return "https://wa.me/{$wa_clean}?text=" . rawurlencode($msg);
 }
 
 /**

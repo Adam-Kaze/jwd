@@ -180,7 +180,7 @@ include '../includes/header.php';
     gap: 1rem;
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    border-bottom: 1px solid rgba(212, 175, 55, 0.1);
 }
 
 .header-left {
@@ -192,7 +192,8 @@ include '../includes/header.php';
 .page-title-admin {
     font-size: 1.5rem;
     font-weight: 700;
-    color: #1f2462;
+    color: #f5f5f5;
+    font-family: 'Playfair Display', serif;
     display: flex;
     align-items: center;
     gap: 0.75rem;
@@ -205,31 +206,38 @@ include '../includes/header.php';
 }
 
 .btn-secondary-dark {
-    background: rgba(31, 36, 98, 0.08);
-    color: #1f2462;
+    background: rgba(255, 255, 255, 0.04);
+    color: rgba(212, 175, 55, 0.85);
     padding: 0.65rem 1.5rem;
-    border: 1px solid rgba(31, 36, 98, 0.15);
-    border-radius: 8px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .btn-secondary-dark:hover {
-    background: rgba(31, 36, 98, 0.15);
+    background: rgba(212, 175, 55, 0.1);
+    color: #d4af37;
+    border-color: rgba(212, 175, 55, 0.4);
+    transform: translateY(-1px);
 }
 
-/* Form Card */
+/* Form Card - Dark Theme DKV */
 .form-card {
-    background: #fff;
-    border-radius: 12px;
+    background: rgba(20, 20, 20, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 20px;
     padding: 2rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    border-top: 4px solid #e8b830;
+    box-shadow: 0 16px 45px rgba(0,0,0,0.5);
+    border: 1px solid rgba(212, 175, 55, 0.15);
+    border-top: 4px solid #d4af37;
+    color: #f5f5f5;
 }
 
 .form-header {
@@ -238,25 +246,27 @@ include '../includes/header.php';
     align-items: center;
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
-    border-bottom: 2px solid #f0f0f0;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.1);
 }
 
 .form-header h3 {
-    color: #1f2462;
+    color: #d4af37;
     margin: 0;
     font-size: 1.2rem;
+    font-family: 'Playfair Display', serif;
     display: flex;
     align-items: center;
     gap: 0.5rem;
 }
 
 .form-badge {
-    background: #e8b830;
-    color: #1f2462;
-    padding: 0.2rem 0.8rem;
+    background: #d4af37;
+    color: #0b0b0b;
+    padding: 0.25rem 0.85rem;
     border-radius: 20px;
     font-size: 0.75rem;
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
 /* Form Grids */
@@ -279,10 +289,10 @@ include '../includes/header.php';
 }
 
 .form-section {
-    background: #f8f9fa;
-    border-radius: 12px;
+    background: rgba(11, 11, 11, 0.6);
+    border-radius: 14px;
     padding: 1.5rem;
-    border: 1px solid #e9ecef;
+    border: 1px solid rgba(212, 175, 55, 0.08);
 }
 
 .form-section.full-width {
@@ -291,14 +301,15 @@ include '../includes/header.php';
 
 .section-title {
     font-size: 1rem;
-    font-weight: 600;
-    color: #1f2462;
+    font-weight: 700;
+    color: #d4af37;
     margin-bottom: 1.25rem;
     padding-bottom: 0.75rem;
-    border-bottom: 2px solid rgba(232, 184, 48, 0.3);
+    border-bottom: 2px solid rgba(212, 175, 55, 0.2);
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    font-family: 'Playfair Display', serif;
 }
 
 /* Form Groups */
@@ -310,39 +321,45 @@ include '../includes/header.php';
     display: block;
     font-size: 0.85rem;
     font-weight: 500;
-    color: #495057;
-    margin-bottom: 0.3rem;
+    color: #d0d0d0;
+    margin-bottom: 0.4rem;
 }
 
 .form-group label .required {
-    color: #dc2626;
+    color: #ef4444;
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
     width: 100%;
-    padding: 0.6rem 0.75rem;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    background: #fff;
-    color: #1f2937;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    color: #f5f5f5;
     font-size: 0.9rem;
     transition: all 0.3s ease;
     box-sizing: border-box;
+}
+
+.form-group select option {
+    background: #161616;
+    color: #f5f5f5;
 }
 
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
     outline: none;
-    border-color: #e8b830;
-    box-shadow: 0 0 0 3px rgba(232, 184, 48, 0.2);
+    border-color: rgba(212, 175, 55, 0.4);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08);
+    background: rgba(255, 255, 255, 0.06);
 }
 
 .form-group input::placeholder,
 .form-group textarea::placeholder {
-    color: #9ca3af;
+    color: rgba(255, 255, 255, 0.25);
 }
 
 /* Input with Icon */
@@ -355,9 +372,9 @@ include '../includes/header.php';
     left: 0.75rem;
     top: 50%;
     transform: translateY(-50%);
-    color: #6b7280;
+    color: #d4af37;
     font-size: 0.85rem;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .input-with-icon input {
@@ -373,73 +390,78 @@ include '../includes/header.php';
 
 .btn-template {
     padding: 0.4rem 1rem;
-    background: rgba(232, 184, 48, 0.1);
-    color: #b8941f;
-    border: 1px solid rgba(232, 184, 48, 0.25);
+    background: rgba(212, 175, 55, 0.1);
+    color: #d4af37;
+    border: 1px solid rgba(212, 175, 55, 0.25);
     border-radius: 20px;
     cursor: pointer;
     font-size: 0.8rem;
+    font-weight: 600;
     transition: all 0.3s ease;
 }
 
 .btn-template:hover {
-    background: rgba(232, 184, 48, 0.2);
-    border-color: #e8b830;
+    background: rgba(212, 175, 55, 0.2);
+    border-color: #d4af37;
 }
 
 .btn-template-danger {
     padding: 0.4rem 1rem;
-    background: rgba(220, 38, 38, 0.1);
-    color: #dc2626;
-    border: 1px solid rgba(220, 38, 38, 0.25);
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.25);
     border-radius: 20px;
     cursor: pointer;
     font-size: 0.8rem;
+    font-weight: 600;
     transition: all 0.3s ease;
 }
 
 .btn-template-danger:hover {
-    background: rgba(220, 38, 38, 0.2);
-    border-color: #dc2626;
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
 }
 
 /* Form Actions */
 .form-actions {
     margin-top: 2rem;
     padding-top: 1.5rem;
-    border-top: 1px solid #e9ecef;
+    border-top: 1px solid rgba(212, 175, 55, 0.1);
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
 }
 
 .btn-gold {
-    background: linear-gradient(135deg, #e8b830, #d4a020);
-    color: #1f2462;
-    padding: 0.65rem 2rem;
+    background: linear-gradient(135deg, #d4af37, #b8962e);
+    color: #0b0b0b;
+    padding: 0.75rem 2rem;
     border: none;
-    border-radius: 8px;
-    font-weight: 600;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.95rem;
     cursor: pointer;
     transition: all 0.3s ease;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     text-decoration: none;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25);
 }
 
 .btn-gold:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(232, 184, 48, 0.4);
+    box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+    background: linear-gradient(135deg, #e0c040, #c4a032);
 }
 
 /* Alert Messages */
 .alert-success {
-    background: rgba(34, 197, 94, 0.1);
-    color: #16a34a;
+    background: rgba(16, 185, 129, 0.1);
+    color: #10b981;
     padding: 1rem 1.25rem;
-    border-radius: 8px;
-    border-left: 4px solid #22c55e;
+    border-radius: 10px;
+    border-left: 4px solid #10b981;
     margin-bottom: 1.5rem;
     display: flex;
     align-items: center;
@@ -447,11 +469,11 @@ include '../includes/header.php';
 }
 
 .alert-error {
-    background: rgba(220, 38, 38, 0.1);
-    color: #dc2626;
+    background: rgba(239, 68, 68, 0.1);
+    color: #f87171;
     padding: 1rem 1.25rem;
-    border-radius: 8px;
-    border-left: 4px solid #dc2626;
+    border-radius: 10px;
+    border-left: 4px solid #ef4444;
     margin-bottom: 1.5rem;
     display: flex;
     align-items: center;
@@ -498,11 +520,6 @@ include '../includes/header.php';
         flex-direction: column;
         align-items: flex-start;
     }
-}
-
-/* Dark mode untuk admin */
-body {
-    background: #f0f2f5;
 }
 </style>
 

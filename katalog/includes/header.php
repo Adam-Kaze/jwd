@@ -118,6 +118,30 @@
             color: #a0a0a0;
             align-items: center;
         }
+        .btn-back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            color: rgba(212, 175, 55, 0.75);
+            font-size: 0.78rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+        }
+        .btn-back-home:hover {
+            background: rgba(212, 175, 55, 0.08);
+            border-color: rgba(212, 175, 55, 0.5);
+            color: #d4af37;
+            transform: translateY(-1px);
+        }
+        @media (max-width: 767px) {
+            .btn-back-home span { display: none; }
+            .btn-back-home { padding: 6px 10px; }
+        }
         .header-actions i {
             transition: all 0.2s;
         }
@@ -249,7 +273,7 @@
             display: grid;
             grid-template-columns: 280px 1fr;
             gap: 2rem;
-            padding: 2rem;
+            padding: 0.75rem 2rem 2rem;
             flex: 1;
             max-width: 1440px;
             margin: 0 auto;
@@ -262,7 +286,7 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-radius: 24px;
-            padding: 1.5rem 0;
+            padding: 0 0 1rem;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             height: fit-content;
             position: sticky;
@@ -271,7 +295,7 @@
         }
         .sidebar-header {
             font-weight: 700;
-            padding: 0 1.5rem 1rem;
+            padding: 1rem 1.5rem 1rem;
             border-bottom: 2px solid rgba(212, 175, 55, 0.06);
             font-size: 1rem;
             display: flex;
@@ -362,6 +386,7 @@
         }
         
         .products-header { 
+            margin-top: 1rem;
             margin-bottom: 2rem;
             text-align: left;
         }
@@ -881,6 +906,11 @@
             <i class="fas fa-bars"></i>
         </div>
         <div class="header-actions">
+            <a href="../index.php" class="btn-back-home" title="Kembali ke Landing Page">
+                <i class="fas fa-arrow-left"></i>
+                <span>Kembali</span>
+            </a>
+
             <div class="search-container">
                 <i class="fas fa-search" id="searchIcon"></i>
                 <div class="search-input" id="searchInput">

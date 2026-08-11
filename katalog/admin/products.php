@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_action'])) {
     $desc = clean_input($_POST['description']);
     $price = clean_input($_POST['price']);
     $demo_link = clean_input($_POST['demo_link']);
-    $wa_number = clean_input($_POST['wa_number']);
+    $wa_number = !empty($_POST['wa_number']) ? clean_phone_number(clean_input($_POST['wa_number'])) : '';
     
     $image_url = $_POST['old_image'] ?? '';
     
@@ -263,8 +263,9 @@ include 'includes/header.php';
                     <input type="text" name="price" value="<?= htmlspecialchars($old_data['price'] ?? $edit_product['price'] ?? '') ?>" placeholder="Rp 2.500.000">
                 </div>
                 <div class="form-group">
-                    <label>Nomor WhatsApp</label>
-                    <input type="text" name="wa_number" value="<?= htmlspecialchars($old_data['wa_number'] ?? $edit_product['wa_number'] ?? '') ?>" placeholder="6281234567890">
+                    <label>Nomor WhatsApp (Opsional)</label>
+                    <?php $prod_wa = $old_data['wa_number'] ?? $edit_product['wa_number'] ?? ''; ?>
+                    <input type="text" name="wa_number" value="<?= htmlspecialchars(!empty($prod_wa) ? format_phone_number($prod_wa) : '') ?>" placeholder="+62 812-3456-7890">
                     <small>Kosongkan untuk menggunakan nomor default</small>
                 </div>
                 <div class="form-group">
@@ -369,7 +370,7 @@ include 'includes/header.php';
                         <td><strong><?= htmlspecialchars($p['name']) ?></strong></td>
                         <td><span class="category-badge"><?= htmlspecialchars($p['category_name']) ?></span></td>
                         <td class="price-tag"><?= htmlspecialchars($p['price']) ?></td>
-                        <td><?= !empty($p['wa_number']) ? htmlspecialchars($p['wa_number']) : '<span style="color:rgba(255,255,255,0.15);">-</span>' ?></td>
+                        <td><?= !empty($p['wa_number']) ? htmlspecialchars(format_phone_number($p['wa_number'])) : '<span style="color:rgba(255,255,255,0.15);">-</span>' ?></td>
                         <td>
                             <div class="action-buttons">
                                 <a href="?edit=<?= $p['id'] ?>" class="btn-edit"><i class="fas fa-edit"></i></a>

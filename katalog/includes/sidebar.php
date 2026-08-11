@@ -63,22 +63,10 @@ global $conn;
             <i class="fas fa-headset" style="color: #d4af37;"></i> 
             Butuh bantuan? 
             <?php 
-            // --- KEAMANAN: Ambil nomor WA dengan Prepared Statement ---
-            $wa_number = '6281383796300'; // Default
-            if (isset($conn)) {
-                $stmt_wa = mysqli_prepare($conn, "SELECT setting_value FROM settings WHERE setting_key = ? LIMIT 1");
-                $key_wa = 'wa_number';
-                mysqli_stmt_bind_param($stmt_wa, "s", $key_wa);
-                mysqli_stmt_execute($stmt_wa);
-                $result_wa = mysqli_stmt_get_result($stmt_wa);
-                if ($result_wa && mysqli_num_rows($result_wa) > 0) {
-                    $row_wa = mysqli_fetch_assoc($result_wa);
-                    $wa_number = $row_wa['setting_value'];
-                }
-                mysqli_stmt_close($stmt_wa);
-            }
+            $wa_clean = get_wa_number();
+            $wa_msg = "Halo DKV ROOM! 👋\nSaya berminat untuk berkonsultasi mengenai studio & layanan kreatif. Terima kasih! 🙏";
             ?>
-            <a href="https://wa.me/<?= $wa_number ?>" target="_blank" style="color: #d4af37; font-weight: 600; text-decoration: none;">Hubungi Studio</a>
+            <a href="https://wa.me/<?= $wa_clean ?>?text=<?= rawurlencode($wa_msg) ?>" target="_blank" style="color: #d4af37; font-weight: 600; text-decoration: none;">Hubungi Studio</a>
         </small>
     </div>
 </aside>

@@ -670,7 +670,7 @@ if (!$valid_image) {
                     <i class="fa-regular fa-star"></i> Simpan ke Koleksi
                 </button>
 
-                <a href="https://wa.me/<?= $wa_number ?>?text=Halo%2C%20saya%20tertarik%20dengan%20proyek%20<?= rawurlencode($product['name']) ?>%20di%20DKV%20ROOM.%20Mohon%20informasi%20lebih%20lanjut%20mengenai%20pengerjaan%20dan%20estimasi%20biaya.%20Terima%20kasih." 
+                <a href="<?= get_product_wa_consultation_link($product, $wa_default) ?>" 
                    class="btn-wa" target="_blank">
                     <i class="fab fa-whatsapp"></i> Konsultasi via WhatsApp
                 </a>

@@ -1141,7 +1141,7 @@
 </head>
 <body>
 <div class="admin-wrapper">
-    <?php include 'sidebar.php'; ?>
+    <?php include __DIR__ . '/sidebar.php'; ?>
     
     <!-- Overlay untuk mobile -->
     <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -1161,6 +1161,10 @@
                     <i class="fas fa-user-circle"></i>
                     <span><?= htmlspecialchars($_SESSION['admin_username'] ?? 'Admin') ?></span>
                 </div>
-                <a href="../logout.php" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                <?php 
+                $active_dir = basename(dirname($_SERVER['PHP_SELF']));
+                $admin_logout_link = ($active_dir == 'invoice') ? '../logout.php' : 'logout.php';
+                ?>
+                <a href="<?= $admin_logout_link ?>" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
         </div>
