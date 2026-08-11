@@ -39,17 +39,29 @@ if ($recent_count > 0) {
     mysqli_data_seek($recent_products, 0);
 }
 
-// --- 3. AMBIL NOMOR WHATSAPP DEFAULT (Prepared Statement) ---
-$wa_default = '6281383796300';
-$stmt_wa = mysqli_prepare($conn, "SELECT setting_value FROM settings WHERE setting_key = ? LIMIT 1");
-$key_wa = 'wa_number';
-mysqli_stmt_bind_param($stmt_wa, "s", $key_wa);
-mysqli_stmt_execute($stmt_wa);
-$res_wa = mysqli_stmt_get_result($stmt_wa);
-if ($res_wa && mysqli_num_rows($res_wa) > 0) {
-    $wa_default = mysqli_fetch_assoc($res_wa)['setting_value'];
+// --- 3. AMBIL STATISTIK INVOICE ---
+$total_invoices = 0;
+$total_invoice_revenue = 0;
+$check_inv = mysqli_query($conn, "SHOW TABLES LIKE 'invoices'");
+if (mysqli_num_rows($check_inv) > 0) {
+    $stmt_inv = mysqli_prepare($conn, "SELECT COUNT(*) as cnt, COALESCE(SUM(total),0) as revenue FROM invoices WHERE status = 'paid'");
+    if ($stmt_inv) {
+        mysqli_stmt_execute($stmt_inv);
+        $res_inv = mysqli_stmt_get_result($stmt_inv);
+        $inv_row = mysqli_fetch_assoc($res_inv);
+        $total_invoices = (int)$inv_row['cnt'];
+        $total_invoice_revenue = (float)$inv_row['revenue'];
+        mysqli_stmt_close($stmt_inv);
+    }
+    // Total semua invoice
+    $stmt_inv_all = mysqli_prepare($conn, "SELECT COUNT(*) as cnt FROM invoices");
+    if ($stmt_inv_all) {
+        mysqli_stmt_execute($stmt_inv_all);
+        $res_inv_all = mysqli_stmt_get_result($stmt_inv_all);
+        $total_invoices_all = (int)mysqli_fetch_assoc($res_inv_all)['cnt'];
+        mysqli_stmt_close($stmt_inv_all);
+    }
 }
-mysqli_stmt_close($stmt_wa);
 
 // --- 4. DATA UNTUK CHART (Prepared Statement) ---
 // AMBIL DATA KATEGORI DAN JUMLAH PRODUK
@@ -116,12 +128,13 @@ include 'includes/header.php';
             </div>
         </div>
         <div class="stat-card gold">
-            <div class="stat-icon">
-                <i class="fab fa-whatsapp" style="color: #25D366;"></i>
+            <div class="stat-icon" style="color: #10b981;">
+                <i class="fas fa-file-invoice-dollar"></i>
             </div>
             <div class="stat-info">
-                <span class="stat-label">WhatsApp Default</span>
-                <span class="stat-number" style="font-size:1.2rem;font-weight:600;"><?= htmlspecialchars($wa_default) ?></span>
+                <span class="stat-label">Invoice Lunas</span>
+                <span class="stat-number" style="color: #10b981;"><?= $total_invoices ?> / <?= $total_invoices_all ?? 0 ?></span>
+                <span style="font-size:0.72rem;color:#a0a0a0;margin-top:2px;"><?= format_rupiah($total_invoice_revenue) ?></span>
             </div>
         </div>
     </div>
@@ -258,8 +271,19 @@ include 'includes/header.php';
         const labels = <?= json_encode($chart_categories) ?>;
         const data = <?= json_encode($chart_counts) ?>;
         
-        // Warna untuk chart
-        const colors = ['#d4af37', '#f5d77b', '#b8962e', '#e8c44a', '#a07d28', '#c9a84c', '#e0c56a'];
+        // Warna untuk chart — kontras & beragam, bukan monochrome emas
+        const colors = [
+            '#d4af37',  // Gold — primary brand
+            '#3b82f6',  // Biru cerah
+            '#10b981',  // Hijau teal
+            '#f97316',  // Oranye
+            '#a855f7',  // Ungu
+            '#ef4444',  // Merah
+            '#06b6d4',  // Cyan
+        ];
+        const borderColors = [
+            '#b8962e', '#2563eb', '#059669', '#ea580c', '#9333ea', '#dc2626', '#0891b2'
+        ];
         
         new Chart(ctx, {
             type: 'doughnut',
@@ -268,9 +292,9 @@ include 'includes/header.php';
                 datasets: [{
                     data: data,
                     backgroundColor: colors.slice(0, labels.length),
+                    borderColor: borderColors.slice(0, labels.length),
                     borderWidth: 2,
-                    borderColor: '#1a1a2e',
-                    hoverOffset: 10
+                    hoverOffset: 12
                 }]
             },
             options: {
@@ -281,10 +305,10 @@ include 'includes/header.php';
                     legend: { 
                         position: 'bottom', 
                         labels: { 
-                            font: { size: 12, family: 'Inter', weight: '500' },
+                            font: { size: 12, family: 'Inter', weight: '600' },
                             boxWidth: 14,
                             padding: 16,
-                            color: '#c0c0c0',
+                            color: '#e0e0e0',
                             usePointStyle: true,
                             pointStyle: 'circle'
                         } 
