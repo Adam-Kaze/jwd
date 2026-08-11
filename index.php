@@ -27,25 +27,12 @@
         body {
             height: 100%;
             font-family: 'Inter', sans-serif;
-            background: #0b0b0b;
             color: #f0f0f0;
             overflow: hidden;
         }
 
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        button {
-            font-family: inherit;
-            cursor: pointer;
-            border: none;
-            outline: none;
-        }
-
         /* ==========================================
-           HERO — FULL VIEWPORT
+           HERO — DENGAN BACKGROUND IMAGE
            ========================================== */
         .hero {
             position: relative;
@@ -53,26 +40,69 @@
             height: 100vh;
             height: 100dvh;
             overflow: hidden;
-            background: 
-                radial-gradient(ellipse at 20% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
-                linear-gradient(135deg, #0b0b0b 0%, #161616 50%, #1a1a1a 100%);
             display: flex;
             align-items: center;
+            
+            /* ===== BACKGROUND IMAGE UTAMA ===== */
+            background-image: url('bg.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            
+            /* fallback jika gambar tidak ditemukan */
+            background-color: #0b0b0b;
         }
 
+        /* ===== OVERLAY GELAP UNTUK READABILITY ===== */
         .hero::before {
             content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: 
+                /* Overlay gelap agar teks terbaca */
+                linear-gradient(135deg, rgba(0,0,0,0.75) 0%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.70) 100%),
+                /* tetap ada sentuhan DKV: grid halus & aksen emas */
+                repeating-linear-gradient(45deg, 
+                    rgba(212, 175, 55, 0.03) 0px, 
+                    rgba(212, 175, 55, 0.03) 2px, 
+                    transparent 2px, 
+                    transparent 8px),
+                repeating-linear-gradient(-45deg, 
+                    rgba(212, 175, 55, 0.02) 0px, 
+                    rgba(212, 175, 55, 0.02) 1px, 
+                    transparent 1px, 
+                    transparent 12px);
+            pointer-events: none;
+        }
+
+        /* ===== AKSEN GLOW EMAS ===== */
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(212, 175, 55, 0.10), transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(212, 175, 55, 0.06), transparent 40%),
+                radial-gradient(circle at 50% 90%, rgba(212, 175, 55, 0.04), transparent 30%);
+            pointer-events: none;
+        }
+
+        /* ===== FLOATING GLOW ORB ===== */
+        .glow-orb {
             position: absolute;
             width: 600px;
             height: 600px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(212, 175, 55, 0.06), transparent 70%);
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.08), transparent 70%);
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            filter: blur(80px);
-            animation: pulseGlow 8s ease-in-out infinite;
+            filter: blur(100px);
+            z-index: 1;
+            animation: pulseGlow 12s ease-in-out infinite;
+            pointer-events: none;
         }
 
         .container {
@@ -80,7 +110,7 @@
             max-width: 95%;
             margin: 0 auto;
             position: relative;
-            z-index: 5;
+            z-index: 10;
         }
 
         /* ==========================================
@@ -91,9 +121,15 @@
             align-items: center;
             justify-content: space-between;
             padding: 18px 0 12px 0;
-            border-bottom: 1px solid rgba(212, 175, 55, 0.12);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.15);
             flex-wrap: wrap;
             gap: 8px;
+            backdrop-filter: blur(4px);
+            background: rgba(0,0,0,0.2);
+            border-radius: 16px;
+            padding: 12px 20px;
+            position: relative;
+            z-index: 12;
         }
 
         .logo {
@@ -113,6 +149,7 @@
             justify-content: center;
             color: #0b0b0b;
             font-size: 16px;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
         }
 
         .logo-text {
@@ -126,6 +163,7 @@
             font-weight: 800;
             color: #f5f5f5;
             letter-spacing: 0.3px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
         .logo-text span:nth-child(2) {
@@ -134,6 +172,7 @@
             font-weight: 700;
             color: #d4af37;
             text-transform: uppercase;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.5);
         }
 
         .menu {
@@ -145,9 +184,10 @@
         .menu a {
             font-size: 13px;
             font-weight: 500;
-            color: #a0a0a0;
+            color: #c0c0c0;
             transition: .3s;
             position: relative;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
         }
 
         .menu a::after {
@@ -184,11 +224,12 @@
             font-weight: 700;
             font-size: 13px;
             transition: .35s;
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.3);
         }
 
         .btn-login:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5);
             background: #e8c44a;
         }
 
@@ -202,13 +243,20 @@
             padding: 20px 0;
             height: calc(100vh - 80px);
             height: calc(100dvh - 80px);
+            position: relative;
+            z-index: 10;
         }
 
         .hero-center {
             max-width: 620px;
             width: 100%;
             text-align: center;
-            padding: 20px;
+            padding: 30px 35px;
+            background: rgba(0,0,0,0.35);
+            backdrop-filter: blur(12px);
+            border-radius: 32px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
         }
 
         /* ==========================================
@@ -222,6 +270,7 @@
             color: #f5f5f5;
             margin-bottom: 16px;
             animation: fadeInUp 0.8s ease 0.1s both;
+            text-shadow: 0 4px 30px rgba(0,0,0,0.5);
         }
 
         .hero-title .highlight {
@@ -231,26 +280,26 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             animation: shimmer 3s ease-in-out infinite;
+            text-shadow: 0 4px 30px rgba(212, 175, 55, 0.2);
         }
 
         .hero-subtitle {
             font-size: 18px;
             line-height: 1.7;
-            color: #b0b0b0;
+            color: #e0e0e0;
             margin-bottom: 32px;
             max-width: 500px;
             margin-left: auto;
             margin-right: auto;
             animation: fadeInUp 0.8s ease 0.2s both;
+            text-shadow: 0 2px 15px rgba(0,0,0,0.5);
         }
 
         .hero-subtitle strong {
             color: #f5f5f5;
+            font-weight: 600;
         }
 
-        /* ==========================================
-           BUTTON ONLY
-           ========================================== */
         .button-wrapper {
             animation: fadeInUp 0.8s ease 0.3s both;
         }
@@ -266,11 +315,13 @@
             display: inline-flex;
             align-items: center;
             gap: 12px;
+            box-shadow: 0 8px 35px rgba(212, 175, 55, 0.3);
         }
 
         .btn-catalog:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.3);
+            box-shadow: 0 15px 50px rgba(212, 175, 55, 0.5);
+            background: linear-gradient(135deg, #e0c040, #f5d77b);
         }
 
         .btn-catalog:active {
@@ -286,17 +337,18 @@
             right: 20px;
             padding: 16px 24px;
             border-radius: 12px;
-            background: #1a1a1a;
-            border: 1px solid rgba(212, 175, 55, 0.2);
+            background: rgba(26, 26, 26, 0.9);
+            border: 1px solid rgba(212, 175, 55, 0.25);
             color: #f5f5f5;
             font-size: 14px;
             transform: translateX(120%);
             transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             z-index: 999;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
             display: flex;
             align-items: center;
             gap: 12px;
+            backdrop-filter: blur(15px);
         }
 
         .notification.show {
@@ -320,8 +372,8 @@
            ANIMATIONS
            ========================================== */
         @keyframes pulseGlow {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.6; }
-            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.9; }
         }
 
         @keyframes shimmer {
@@ -360,6 +412,7 @@
                 min-height: 100dvh;
                 align-items: flex-start;
                 padding: 10px 0 30px;
+                background-attachment: fixed;
             }
 
             .hero-wrapper {
@@ -371,12 +424,18 @@
             }
 
             .hero-center {
-                padding: 10px 0;
+                padding: 24px 16px;
+                backdrop-filter: blur(10px);
+                background: rgba(0,0,0,0.45);
+                border-radius: 24px;
+                margin-top: 10px;
             }
 
             .navbar {
-                padding: 12px 0 10px 0;
+                padding: 12px 16px;
                 gap: 6px;
+                backdrop-filter: blur(6px);
+                background: rgba(0,0,0,0.3);
             }
 
             .menu {
@@ -422,6 +481,12 @@
                 padding: 14px 18px;
                 font-size: 13px;
             }
+
+            .glow-orb {
+                width: 400px;
+                height: 400px;
+                filter: blur(100px);
+            }
         }
 
         @media (max-width: 400px) {
@@ -452,6 +517,9 @@
     HERO
     ========================================== -->
     <section class="hero">
+        <!-- Glow orb untuk nuansa DKV -->
+        <div class="glow-orb"></div>
+
         <div class="container">
 
             <!-- ===== NAVBAR ===== -->

@@ -175,7 +175,50 @@ if (isset($_SESSION['cart'])) {
        OVERRIDE KATALOG - DKV ROOM STYLE
        ========================================== */
     
+    /* ===== BACKGROUND GRADIENT (REVISI) ===== */
+    body {
+        background: 
+            radial-gradient(ellipse at 20% 50%, rgba(212, 175, 55, 0.05) 0%, transparent 60%),
+            radial-gradient(ellipse at 80% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+            linear-gradient(135deg, #0b0b0b 0%, #161616 50%, #1a1a1a 100%);
+        min-height: 100vh;
+        position: relative;
+    }
+
+    /* Tambahan efek glow seperti di halaman utama */
+    body::before {
+        content: "";
+        position: fixed;
+        width: 600px;
+        height: 600px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(212, 175, 55, 0.04), transparent 70%);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        filter: blur(80px);
+        animation: pulseGlow 8s ease-in-out infinite;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    @keyframes pulseGlow {
+        0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
+        50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+    }
+
+    /* Main content harus di atas background */
+    .main-content {
+        position: relative;
+        z-index: 1;
+    }
+
     /* Header */
+    .products-header {
+        position: relative;
+        z-index: 2;
+    }
+
     .products-header h2 {
         font-family: 'Playfair Display', serif;
         font-weight: 700;
@@ -200,6 +243,8 @@ if (isset($_SESSION['cart'])) {
         box-shadow: 0 12px 30px rgba(0, 0, 0, .4);
         transition: all 0.4s ease;
         overflow: hidden;
+        position: relative;
+        z-index: 2;
     }
 
     .product-card:hover {
@@ -360,6 +405,8 @@ if (isset($_SESSION['cart'])) {
         backdrop-filter: blur(8px);
         border-radius: 32px;
         border: 1px solid rgba(212, 175, 55, 0.1);
+        position: relative;
+        z-index: 2;
     }
 
     .empty-state i {
@@ -432,6 +479,23 @@ if (isset($_SESSION['cart'])) {
         }
     }
 
+    /* Sidebar dan header tetap konsisten */
+    .sidebar {
+        position: relative;
+        z-index: 2;
+        background: rgba(11, 11, 11, 0.9);
+        backdrop-filter: blur(10px);
+        border-right: 1px solid rgba(212, 175, 55, 0.08);
+    }
+
+    .header {
+        position: relative;
+        z-index: 2;
+        background: rgba(11, 11, 11, 0.9);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(212, 175, 55, 0.08);
+    }
+
     /* Responsif */
     @media (max-width: 768px) {
         .products-header h2 {
@@ -458,6 +522,44 @@ if (isset($_SESSION['cart'])) {
             padding: 12px 20px;
             bottom: 16px;
             width: 90%;
+        }
+
+        body::before {
+            width: 300px;
+            height: 300px;
+            filter: blur(60px);
+        }
+    }
+
+    /* Grid produk - pastikan tetap rapi */
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 24px;
+        padding: 10px 0;
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Animasi tambahan untuk kesan premium */
+    .product-card {
+        animation: fadeInUp 0.6s ease both;
+    }
+
+    .product-card:nth-child(2) { animation-delay: 0.1s; }
+    .product-card:nth-child(3) { animation-delay: 0.2s; }
+    .product-card:nth-child(4) { animation-delay: 0.3s; }
+    .product-card:nth-child(5) { animation-delay: 0.4s; }
+    .product-card:nth-child(6) { animation-delay: 0.5s; }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
         }
     }
 </style>

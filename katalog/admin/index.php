@@ -24,12 +24,20 @@ $total_categories = mysqli_fetch_assoc($res_cat)['total'];
 mysqli_stmt_close($stmt_cat);
 
 // --- 2. AMBIL 5 PRODUK TERBARU (Prepared Statement) ---
+// PASTIKAN QUERY INI MENGAMBIL 5 PRODUK TERBARU
 $stmt_recent = mysqli_prepare($conn, "SELECT p.*, c.name as category_name 
                                       FROM products p 
                                       JOIN categories c ON p.category_id = c.id 
                                       ORDER BY p.id DESC LIMIT 5");
 mysqli_stmt_execute($stmt_recent);
 $recent_products = mysqli_stmt_get_result($stmt_recent);
+
+// CEK JUMLAH DATA YANG DIAMBIL
+$recent_count = mysqli_num_rows($recent_products);
+// Reset pointer untuk looping
+if ($recent_count > 0) {
+    mysqli_data_seek($recent_products, 0);
+}
 
 // --- 3. AMBIL NOMOR WHATSAPP DEFAULT (Prepared Statement) ---
 $wa_default = '6281383796300';
@@ -44,20 +52,40 @@ if ($res_wa && mysqli_num_rows($res_wa) > 0) {
 mysqli_stmt_close($stmt_wa);
 
 // --- 4. DATA UNTUK CHART (Prepared Statement) ---
+// AMBIL DATA KATEGORI DAN JUMLAH PRODUK
 $chart_categories = [];
 $chart_counts = [];
 $stmt_chart = mysqli_prepare($conn, "SELECT c.name, COUNT(p.id) as total 
                                       FROM categories c 
                                       LEFT JOIN products p ON c.id = p.category_id 
                                       GROUP BY c.id 
-                                      ORDER BY total DESC LIMIT 5");
+                                      ORDER BY total DESC");
 mysqli_stmt_execute($stmt_chart);
 $res_chart = mysqli_stmt_get_result($stmt_chart);
+
+// DEBUG: Cek apakah ada data
+$chart_has_data = false;
 while ($row = mysqli_fetch_assoc($res_chart)) {
     $chart_categories[] = $row['name'];
-    $chart_counts[] = $row['total'];
+    $chart_counts[] = (int)$row['total'];
+    $chart_has_data = true;
 }
 mysqli_stmt_close($stmt_chart);
+
+// Jika tidak ada data, tambahkan data dummy untuk menampilkan chart
+if (!$chart_has_data) {
+    $chart_categories = ['Belum Ada Kategori'];
+    $chart_counts = [1];
+}
+
+// --- 5. AMBIL SEMUA KATEGORI UNTUK STATISTIK LAIN ---
+$stmt_all_categories = mysqli_prepare($conn, "SELECT c.id, c.name, COUNT(p.id) as product_count 
+                                               FROM categories c 
+                                               LEFT JOIN products p ON c.id = p.category_id 
+                                               GROUP BY c.id 
+                                               ORDER BY c.name");
+mysqli_stmt_execute($stmt_all_categories);
+$all_categories = mysqli_stmt_get_result($stmt_all_categories);
 
 include 'includes/header.php';
 ?>
@@ -110,6 +138,28 @@ include 'includes/header.php';
             <div class="chart-container">
                 <canvas id="categoryChart"></canvas>
             </div>
+            <!-- Tampilkan detail statistik di bawah chart -->
+            <div class="chart-stats-detail">
+                <?php 
+                // Reset pointer untuk menampilkan detail
+                mysqli_data_seek($all_categories, 0);
+                $has_products = false;
+                while ($cat = mysqli_fetch_assoc($all_categories)): 
+                    if ($cat['product_count'] > 0) {
+                        $has_products = true;
+                    }
+                ?>
+                    <div class="stat-detail-item">
+                        <span class="stat-detail-label"><?= htmlspecialchars($cat['name']) ?></span>
+                        <span class="stat-detail-value"><?= $cat['product_count'] ?> produk</span>
+                    </div>
+                <?php endwhile; ?>
+                <?php if (!$has_products && $total_products == 0): ?>
+                    <div class="stat-detail-empty">
+                        <i class="fas fa-info-circle"></i> Belum ada produk dalam kategori
+                    </div>
+                <?php endif; ?>
+            </div>
         </div>
 
         <!-- Recent Products Card -->
@@ -117,6 +167,9 @@ include 'includes/header.php';
             <div class="card-header">
                 <i class="fas fa-clock"></i>
                 <h3>Produk Terbaru</h3>
+                <?php if ($recent_count > 0): ?>
+                    <span class="recent-count"><?= $recent_count ?> produk</span>
+                <?php endif; ?>
             </div>
             <div class="table-wrapper">
                 <table class="recent-table">
@@ -129,15 +182,29 @@ include 'includes/header.php';
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (mysqli_num_rows($recent_products) > 0): ?>
-                            <?php while($p = mysqli_fetch_assoc($recent_products)): ?>
+                        <?php if ($recent_count > 0): ?>
+                            <?php 
+                            // Reset pointer ke awal
+                            mysqli_data_seek($recent_products, 0);
+                            $display_count = 0;
+                            while($p = mysqli_fetch_assoc($recent_products)): 
+                                $display_count++;
+                            ?>
                             <tr>
                                 <td><span class="id-badge">#<?= $p['id'] ?></span></td>
-                                <td><?= htmlspecialchars(substr($p['name'], 0, 25)) ?>…</td>
+                                <td><?= htmlspecialchars(substr($p['name'], 0, 25)) ?><?= strlen($p['name']) > 25 ? '…' : '' ?></td>
                                 <td><span class="category-badge"><?= htmlspecialchars($p['category_name']) ?></span></td>
-                                <td><span class="price-tag">Rp <?= number_format($p['price'], 0, ',', '.') ?></span></td>
+                                <td><span class="price-tag">Rp <?= number_format((float)$p['price'], 0, ',', '.') ?></span></td>
                             </tr>
                             <?php endwhile; ?>
+                            <?php if ($display_count < 5): ?>
+                                <!-- Tampilkan baris kosong jika kurang dari 5 -->
+                                <?php for ($i = $display_count; $i < 5; $i++): ?>
+                                <tr class="empty-row">
+                                    <td colspan="4" style="color: rgba(255,255,255,0.1); text-align: center;">-</td>
+                                </tr>
+                                <?php endfor; ?>
+                            <?php endif; ?>
                         <?php else: ?>
                             <tr><td colspan="4" class="empty-state">Belum ada produk</td></tr>
                         <?php endif; ?>
@@ -184,39 +251,133 @@ include 'includes/header.php';
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const ctx = document.getElementById('categoryChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: <?= json_encode($chart_categories) ?>,
-            datasets: [{
-                data: <?= json_encode($chart_counts) ?>,
-                backgroundColor: ['#d4af37', '#f5d77b', '#b8962e', '#e8c44a', '#a07d28'],
-                borderWidth: 0,
-                hoverOffset: 8
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            cutout: '65%',
-            plugins: {
-                legend: { 
-                    position: 'bottom', 
-                    labels: { 
-                        font: { size: 11, family: 'Inter' },
-                        boxWidth: 12,
-                        padding: 14,
-                        color: '#b0b0b0'
-                    } 
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('categoryChart').getContext('2d');
+        
+        // Data dari PHP
+        const labels = <?= json_encode($chart_categories) ?>;
+        const data = <?= json_encode($chart_counts) ?>;
+        
+        // Warna untuk chart
+        const colors = ['#d4af37', '#f5d77b', '#b8962e', '#e8c44a', '#a07d28', '#c9a84c', '#e0c56a'];
+        
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: colors.slice(0, labels.length),
+                    borderWidth: 2,
+                    borderColor: '#1a1a2e',
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                cutout: '60%',
+                plugins: {
+                    legend: { 
+                        position: 'bottom', 
+                        labels: { 
+                            font: { size: 12, family: 'Inter', weight: '500' },
+                            boxWidth: 14,
+                            padding: 16,
+                            color: '#c0c0c0',
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        } 
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                let percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
+                                return context.label + ': ' + context.parsed + ' produk (' + percentage + '%)';
+                            }
+                        }
+                    }
                 }
             }
-        }
+        });
     });
 </script>
 
+<style>
+    /* Tambahan CSS untuk statistik detail */
+    .chart-stats-detail {
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(212, 175, 55, 0.15);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 16px;
+    }
+    
+    .stat-detail-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(212, 175, 55, 0.05);
+        padding: 4px 12px;
+        border-radius: 20px;
+        border: 1px solid rgba(212, 175, 55, 0.08);
+    }
+    
+    .stat-detail-label {
+        color: #a0a0a0;
+        font-size: 0.8rem;
+    }
+    
+    .stat-detail-value {
+        color: #d4af37;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+    
+    .stat-detail-empty {
+        color: #888;
+        font-size: 0.85rem;
+        padding: 8px 0;
+        width: 100%;
+        text-align: center;
+    }
+    
+    .stat-detail-empty i {
+        color: #d4af37;
+        margin-right: 6px;
+    }
+    
+    .recent-count {
+        background: rgba(212, 175, 55, 0.15);
+        color: #d4af37;
+        font-size: 0.7rem;
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-weight: 500;
+        margin-left: auto;
+    }
+    
+    .empty-row td {
+        padding: 6px 12px !important;
+        height: 20px;
+    }
+    
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .card-header .recent-count {
+        margin-left: auto;
+    }
+</style>
+
 <?php 
-// Tutup resource statement yang masih terbuka (recent_products)
+// Tutup resource statement yang masih terbuka
 mysqli_stmt_close($stmt_recent);
+mysqli_stmt_close($stmt_all_categories);
 include 'includes/footer.php'; 
 ?>
