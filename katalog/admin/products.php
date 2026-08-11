@@ -347,25 +347,12 @@ include 'includes/header.php';
                             $image_src = '';
                             
                             if (strpos($image_path, 'uploads/') === 0) {
-                                $possible_paths = [
-                                    __DIR__ . '/../' . $image_path,
-                                    __DIR__ . '/' . $image_path,
-                                    $_SERVER['DOCUMENT_ROOT'] . '/' . $image_path
-                                ];
-                                foreach ($possible_paths as $path) {
-                                    if (file_exists($path)) {
-                                        $image_display = true;
-                                        $image_src = $image_path;
-                                        break;
-                                    }
-                                }
-                                if (!$image_display) {
-                                    $filename = basename($image_path);
-                                    $upload_dir = __DIR__ . '/../uploads/';
-                                    if (file_exists($upload_dir . $filename)) {
-                                        $image_display = true;
-                                        $image_src = 'uploads/' . $filename;
-                                    }
+                                // File ada di katalog/uploads/, cek dulu file-nya
+                                $file_abs = __DIR__ . '/../' . $image_path;
+                                if (file_exists($file_abs)) {
+                                    $image_display = true;
+                                    // Base URL: naik 1 level dari /katalog/admin/ ke /katalog/
+                                    $image_src = '../' . $image_path;
                                 }
                             } elseif (filter_var($image_path, FILTER_VALIDATE_URL)) {
                                 $image_display = true;
@@ -373,7 +360,7 @@ include 'includes/header.php';
                             }
                             
                             if ($image_display && !empty($image_src)) {
-                                echo '<img src="' . htmlspecialchars($image_src) . '" class="product-image" alt="' . htmlspecialchars($p['name']) . '" onerror="this.src=\'https://placehold.co/50x50/2c3e50/white?text=Error\'">';
+                                echo '<img src="' . htmlspecialchars($image_src) . '" class="product-image" alt="' . htmlspecialchars($p['name']) . '" onerror="this.style.display=\'none\'">';
                             } else {
                                 echo '<img src="https://placehold.co/50x50/2c3e50/white?text=No+Img" class="product-image" alt="No Image">';
                             }

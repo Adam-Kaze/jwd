@@ -194,7 +194,7 @@ include 'includes/header.php';
                                 <td><span class="id-badge">#<?= $p['id'] ?></span></td>
                                 <td><?= htmlspecialchars(substr($p['name'], 0, 25)) ?><?= strlen($p['name']) > 25 ? '…' : '' ?></td>
                                 <td><span class="category-badge"><?= htmlspecialchars($p['category_name']) ?></span></td>
-                                <td><span class="price-tag">Rp <?= number_format((float)$p['price'], 0, ',', '.') ?></span></td>
+                                <td><span class="price-tag"><?= htmlspecialchars($p['price'] ?: 'Rp 0') ?></span></td>
                             </tr>
                             <?php endwhile; ?>
                             <?php if ($display_count < 5): ?>
